@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hebert & Co. | Estratégia de Marca & Lançamento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Executive Minimalist -->
+    <!-- Primary Background: Warm Off-White (#F9F7F2) - simulating premium paper -->
+    <!-- Text: Charcoal Black (#1A1A1A) -->
+    <!-- Accents: Antique Gold (#C5A059), Muted Slate (#4A5568) -->
+    
+    <!-- Application Structure Plan: 
+         Designed as a "Strategic Command Center" (Dashboard) for the brand founder.
+         1. Header: Brand Identity & Navigation.
+         2. Manifesto Section: Core brand philosophy and target audience (The Avatar).
+         3. Olfactory Portfolio: Interactive grid allowing deep dives into each of the 4 planned fragrances.
+            Interaction: Click card -> Update Detail View (Notes, Profile, Vibe).
+         4. Financial Intelligence: Interactive analysis of the MVP (300 units).
+            Interaction: Dynamic inputs for costs/price to see real-time impact on charts (Breakdown & Profit).
+         5. Launch Roadmap: Interactive timeline for the 3 phases.
+            Interaction: Tabbed/Stepper interface to reveal checklist items per phase.
+         Why this structure? It follows the logical flow of business creation: Concept -> Product -> Numbers -> Execution.
+    -->
+
+    <!-- Visualization & Content Choices:
+         1. Portfolio: HTML/CSS Grid with JS content swapping. 
+            Goal: Show the depth of the product line.
+            Viz: Text details + "Scent Profile" bars (HTML/CSS) for abstract qualities (Intensity, Sweetness).
+         2. Financials: 
+            - Doughnut Chart (Chart.js) for Cost Breakdown. Visualizes where the money goes.
+            - Bar Chart (Chart.js) for Profit Projection. Visualizes the "Why".
+            - Interaction: Sliders to adjust costs/price, updating charts dynamically.
+         3. Roadmap: Styled Stepper (HTML/CSS).
+            Goal: Execution clarity.
+            Viz: Clear step-by-step lists hidden/shown via JS tabs.
+         CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F9F7F2; /* Warm paper tone */
+            color: #1A1A1A;
+        }
+        h1, h2, h3, h4, .serif {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* Chart Container Styling Rules */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Constraint width */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F1F1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C5A059;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #A38448;
+        }
+
+        .gold-border {
+            border-color: #C5A059;
+        }
+        .text-gold {
+            color: #C5A059;
+        }
+        .bg-gold {
+            background-color: #C5A059;
+        }
+        .hover-bg-gold:hover {
+            background-color: #C5A059;
+        }
+
+        /* Card active state */
+        .fragrance-card.active {
+            border-color: #C5A059;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-[#C5A059] selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-[#F9F7F2]/95 backdrop-blur border-b border-gray-200 py-4 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <div class="serif text-2xl font-bold tracking-widest uppercase border-2 border-black px-3 py-1">
+                Hebert & Co.
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm font-medium tracking-wide">
+                <a href="#manifesto" class="hover:text-[#C5A059] transition-colors">Manifesto</a>
+                <a href="#portfolio" class="hover:text-[#C5A059] transition-colors">Fragrâncias</a>
+                <a href="#financials" class="hover:text-[#C5A059] transition-colors">Viabilidade</a>
+                <a href="#roadmap" class="hover:text-[#C5A059] transition-colors">Roadmap</a>
+            </div>
+            <button onclick="window.print()" class="md:hidden text-gray-600 hover:text-black">
+                Imprimir
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-24">
+
+        <!-- 1. Manifesto Section -->
+        <section id="manifesto" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div class="lg:col-span-7 space-y-6">
+                <p class="text-[#C5A059] font-bold tracking-[0.2em] uppercase text-sm">Documento Estratégico v1.0</p>
+                <h1 class="serif text-5xl md:text-6xl leading-tight text-gray-900">
+                    O Poder Silencioso <br>da Autoridade.
+                </h1>
+                <div class="prose prose-lg text-gray-600 border-l-4 border-[#C5A059] pl-6">
+                    <p>
+                        Hebert & Co. não vende apenas perfumes. Vendemos a construção de uma aura. 
+                        Inspirada pelo universo corporativo e financeiro, nossa missão é entregar 
+                        ferramentas olfativas de presença, imagem e liderança para homens que constroem legados.
+                    </p>
+                </div>
+                
+                <!-- Audience Avatar Cards -->
+                <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-white p-6 rounded-sm shadow-sm border border-gray-100">
+                        <h3 class="serif text-xl mb-2">O Avatar</h3>
+                        <ul class="text-sm space-y-2 text-gray-600">
+                            <li>• Homens de 28 a 45 anos</li>
+                            <li>• C-Level, Founders, Mercado Financeiro</li>
+                            <li>• Busca ascensão e estética minimalista</li>
+                            <li>• Rejeita o doce e o comum</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-sm shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center">
+                        <div class="text-4xl mb-2">🥃 💼 ♟️</div>
+                        <p class="text-xs uppercase tracking-widest font-bold text-gray-400">Universo Visual</p>
+                        <p class="text-sm text-gray-600 mt-1">Executivo, Sóbrio, Alfaiataria</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-5 bg-white p-8 shadow-lg border-t-4 border-[#C5A059] relative">
+                <div class="absolute -top-4 -right-4 bg-black text-white px-4 py-2 text-xs font-bold uppercase tracking-widest">
+                    Lançamento MVP
+                </div>
+                <h3 class="serif text-2xl mb-6">Foco Estratégico</h3>
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex justify-between text-sm font-bold mb-1">
+                            <span>Exclusividade</span>
+                            <span>Alta</span>
+                        </div>
+                        <div class="w-full bg-gray-200 h-1">
+                            <div class="bg-black h-1 w-[90%]"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm font-bold mb-1">
+                            <span>Acessibilidade de Preço</span>
+                            <span>Média-Alta</span>
+                        </div>
+                        <div class="w-full bg-gray-200 h-1">
+                            <div class="bg-black h-1 w-[65%]"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm font-bold mb-1">
+                            <span>Complexidade Olfativa</span>
+                            <span>Alta</span>
+                        </div>
+                        <div class="w-full bg-gray-200 h-1">
+                            <div class="bg-black h-1 w-[85%]"></div>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-gray-100">
+                        <p class="text-sm text-gray-500 italic">
+                            "Autoridade que se sente antes de ser dita."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Fragrance Portfolio -->
+        <section id="portfolio" class="scroll-mt-24">
+            <div class="mb-8">
+                <h2 class="serif text-3xl md:text-4xl mb-4">O Arsenal Olfativo</h2>
+                <p class="text-gray-600 max-w-2xl">
+                    Cada fragrância foi desenhada como um arquétipo de poder. Explore a coleção abaixo 
+                    para entender a composição olfativa e o perfil psicológico de cada criação.
+                    Clique nos cartões para revelar os detalhes técnicos.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Navigation List -->
+                <div class="lg:col-span-1 space-y-3">
+                    <button class="fragrance-card active w-full text-left p-4 border border-gray-200 hover:bg-white transition-all duration-200 group" onclick="updateFragrance('chairman', this)">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="serif text-xl group-hover:text-[#C5A059] transition-colors">The Chairman</h3>
+                                <p class="text-xs uppercase tracking-wider text-gray-400 mt-1">Autoridade Consolidada</p>
+                            </div>
+                            <span class="text-2xl opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                    </button>
+                    
+                    <button class="fragrance-card w-full text-left p-4 border border-gray-200 hover:bg-white transition-all duration-200 group" onclick="updateFragrance('architect', this)">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="serif text-xl group-hover:text-[#C5A059] transition-colors">The Architect</h3>
+                                <p class="text-xs uppercase tracking-wider text-gray-400 mt-1">Clareza & Foco</p>
+                            </div>
+                            <span class="text-2xl opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                    </button>
+
+                    <button class="fragrance-card w-full text-left p-4 border border-gray-200 hover:bg-white transition-all duration-200 group" onclick="updateFragrance('dealmaker', this)">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="serif text-xl group-hover:text-[#C5A059] transition-colors">The Dealmaker</h3>
+                                <p class="text-xs uppercase tracking-wider text-gray-400 mt-1">Sedução Racional</p>
+                            </div>
+                            <span class="text-2xl opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                    </button>
+
+                    <button class="fragrance-card w-full text-left p-4 border border-gray-200 hover:bg-white transition-all duration-200 group" onclick="updateFragrance('legacy', this)">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="serif text-xl group-hover:text-[#C5A059] transition-colors">The Legacy</h3>
+                                <p class="text-xs uppercase tracking-wider text-gray-400 mt-1">Presença Atemporal</p>
+                            </div>
+                            <span class="text-2xl opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Detail Display -->
+                <div class="lg:col-span-2 bg-white border border-gray-200 p-8 relative min-h-[400px]">
+                    <div id="fragrance-content" class="space-y-8 animate-fade-in">
+                        <!-- Content injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Financial Viability -->
+        <section id="financials" class="scroll-mt-24 bg-white border border-gray-200 p-8 shadow-sm">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <h2 class="serif text-3xl mb-4">Viabilidade Econômica (MVP)</h2>
+                    <p class="text-gray-600 text-sm mb-6">
+                        Análise para um lote piloto de <b>300 unidades</b> de "The Chairman". 
+                        Ajuste os controles para simular cenários de custo e precificação, visualizando o impacto na margem de lucro.
+                    </p>
+                    
+                    <!-- Controls -->
+                    <div class="space-y-6 bg-[#F9F7F2] p-6 rounded-sm border border-gray-200">
+                        <h4 class="font-bold text-xs uppercase tracking-widest border-b border-gray-300 pb-2 mb-4">Painel de Controle</h4>
+                        
+                        <div>
+                            <label class="flex justify-between text-sm font-medium mb-2">
+                                <span>Preço de Venda (R$)</span>
+                                <span id="price-display" class="text-[#C5A059] font-bold">R$ 390</span>
+                            </label>
+                            <input type="range" min="250" max="600" step="10" value="390" id="price-slider" class="w-full accent-[#C5A059]">
+                        </div>
+
+                        <div>
+                            <label class="flex justify-between text-sm font-medium mb-2">
+                                <span>Custo Líquido/Frasco (R$)</span>
+                                <span id="liquid-cost-display" class="text-gray-600">R$ 60</span>
+                            </label>
+                            <input type="range" min="30" max="100" step="5" value="60" id="liquid-slider" class="w-full accent-gray-500">
+                            <p class="text-xs text-gray-400 mt-1">Baseado na estimativa de R$18k total / 300 un</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-300 mt-4">
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase">Custo Unitário Total</p>
+                                <p id="total-unit-cost" class="text-xl font-bold text-gray-800">R$ 80,00</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase">Margem Bruta</p>
+                                <p id="gross-margin" class="text-xl font-bold text-green-700">79%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Area -->
+                <div class="grid grid-cols-1 gap-6">
+                    <!-- Chart 1: Profit Projection -->
+                    <div class="bg-white p-4">
+                         <h4 class="text-center text-xs font-bold uppercase tracking-widest mb-4 text-gray-500">Projeção Financeira (Lote Esgotado)</h4>
+                         <div class="chart-container h-64">
+                             <canvas id="profitChart"></canvas>
+                         </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chart 2: Cost Breakdown (Row below) -->
+            <div class="border-t border-gray-100 pt-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                <div class="md:col-span-1">
+                    <h3 class="serif text-xl mb-2">Composição de Custo</h3>
+                    <p class="text-sm text-gray-600 mb-4">
+                        Detalhamento de onde o capital inicial de ~R$24.000 será alocado. O líquido (essência + produção) representa a maior fatia, garantindo qualidade de nicho.
+                    </p>
+                    <ul class="text-xs space-y-1 text-gray-500">
+                        <li>• Líquido: Essência, Álcool, Maceração</li>
+                        <li>• Embalagem 1ª: Frasco, Válvula, Tampa</li>
+                        <li>• Embalagem 2ª: Caixa, Berço</li>
+                    </ul>
+                </div>
+                <div class="md:col-span-2 flex justify-center">
+                    <div class="chart-container" style="height: 250px; max-width: 400px;">
+                        <canvas id="costChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Roadmap -->
+        <section id="roadmap" class="scroll-mt-24 pb-20">
+            <div class="text-center mb-12">
+                <h2 class="serif text-3xl md:text-4xl mb-4">Roadmap de Execução</h2>
+                <p class="text-gray-600">Plano tático faseado para lançamento em 90 dias.</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex justify-center mb-8 border-b border-gray-200">
+                <button onclick="switchPhase(1)" id="tab-1" class="phase-tab active px-6 py-3 text-sm uppercase tracking-widest font-bold text-[#C5A059] border-b-2 border-[#C5A059] transition-colors">
+                    Fase 1: Fundação
+                </button>
+                <button onclick="switchPhase(2)" id="tab-2" class="phase-tab px-6 py-3 text-sm uppercase tracking-widest font-bold text-gray-400 border-b-2 border-transparent hover:text-gray-600 transition-colors">
+                    Fase 2: Hype
+                </button>
+                <button onclick="switchPhase(3)" id="tab-3" class="phase-tab px-6 py-3 text-sm uppercase tracking-widest font-bold text-gray-400 border-b-2 border-transparent hover:text-gray-600 transition-colors">
+                    Fase 3: Lançamento
+                </button>
+            </div>
+
+            <!-- Phase Content -->
+            <div class="max-w-4xl mx-auto bg-white p-8 border border-gray-200 shadow-sm min-h-[300px]">
+                
+                <div id="phase-1-content" class="phase-content block animate-fade-in">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="text-3xl bg-gray-100 p-3 rounded-full">📦</div>
+                        <div>
+                            <h3 class="serif text-2xl">A Estruturação (Mês 1)</h3>
+                            <p class="text-gray-500 text-sm">Orçamento estimado: R$ 24.000</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="font-bold text-sm uppercase mb-3 text-[#C5A059]">Checklist Crítico</h4>
+                            <ul class="space-y-3 text-sm text-gray-700">
+                                <li class="flex items-start gap-2"><span class="text-green-600">✓</span> Definir Nome: <b>THE CHAIRMAN</b></li>
+                                <li class="flex items-start gap-2"><span>◻</span> Contratar designer (Tipografia Serifada Minimalista)</li>
+                                <li class="flex items-start gap-2"><span>◻</span> Fechar com laboratório (Vollmens/L’envie)</li>
+                                <li class="flex items-start gap-2"><span>◻</span> Comprar 300 frascos + válvulas premium</li>
+                                <li class="flex items-start gap-2"><span>◻</span> Encomendar caixas Kraft com Hotstamp</li>
+                            </ul>
+                        </div>
+                        <div class="bg-[#F9F7F2] p-6 text-sm">
+                            <h4 class="font-bold text-sm uppercase mb-2">Nota Estratégica</h4>
+                            <p class="text-gray-600 italic">
+                                "O foco aqui não é vender, é construir o produto perfeito. A embalagem deve parecer custar 3x mais do que custou. A fonte do rótulo é a decisão mais importante do design."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="phase-2-content" class="phase-content hidden animate-fade-in">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="text-3xl bg-gray-100 p-3 rounded-full">📣</div>
+                        <div>
+                            <h3 class="serif text-2xl">Pré-Venda & Hype (Mês 2)</h3>
+                            <p class="text-gray-500 text-sm">30 dias antes do produto pronto</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="font-bold text-sm uppercase mb-3 text-[#C5A059]">Ações de Marketing</h4>
+                            <ul class="space-y-3 text-sm text-gray-700">
+                                <li class="flex items-start gap-2"><span>◻</span> Instagram: Conteúdo sobre imagem e autoridade</li>
+                                <li class="flex items-start gap-2"><span>◻</span> LinkedIn: Artigos sobre "Psicologia Olfativa"</li>
+                                <li class="flex items-start gap-2"><span>◻</span> Envio de PR Kits (Alfaiates, Consultores)</li>
+                                <li class="flex items-start gap-2"><span>◻</span> <b>Lista VIP no WhatsApp</b> (Foco total aqui)</li>
+                                <li class="flex items-start gap-2"><span>◻</span> Venda de amostras 5ml (R$30 com frete)</li>
+                            </ul>
+                        </div>
+                        <div class="bg-[#F9F7F2] p-6 text-sm">
+                            <h4 class="font-bold text-sm uppercase mb-2">Conteúdo Chave</h4>
+                            <ul class="list-disc ml-4 space-y-1 text-gray-600 italic">
+                                <li>"Você cheira como o cargo que quer ter?"</li>
+                                <li>"O que CEOs bem-sucedidos nunca usam."</li>
+                                <li>"Como fechar acordos com cheiro, não palavras."</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="phase-3-content" class="phase-content hidden animate-fade-in">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="text-3xl bg-gray-100 p-3 rounded-full">💼</div>
+                        <div>
+                            <h3 class="serif text-2xl">Venda & Escala (Mês 3)</h3>
+                            <p class="text-gray-500 text-sm">Objetivo: Esgotar 300un</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="font-bold text-sm uppercase mb-3 text-[#C5A059]">Execução de Venda</h4>
+                            <ul class="space-y-3 text-sm text-gray-700">
+                                <li class="flex items-start gap-2"><span>◻</span> Abertura do carrinho (Shopify/Cartpanda)</li>
+                                <li class="flex items-start gap-2"><span>◻</span> Disparo na Lista VIP (24h de exclusividade)</li>
+                                <li class="flex items-start gap-2"><span>◻</span> Logística: Carta assinada à mão em cada caixa</li>
+                                <li class="flex items-start gap-2"><span>◻</span> Reinvestir 100% do lucro no Lote 002</li>
+                            </ul>
+                        </div>
+                        <div class="bg-[#F9F7F2] p-6 text-sm">
+                            <h4 class="font-bold text-sm uppercase mb-2">Próximos Passos</h4>
+                            <p class="text-gray-600">
+                                Após o sucesso do lançamento, iniciar o desenvolvimento do <b>The Architect</b> (Foco/Produtividade) e criar o clube de recompra "The Chairman's Circle".
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#1A1A1A] text-[#F9F7F2] py-12 border-t border-[#C5A059]">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h2 class="serif text-2xl mb-4">Hebert & Co.</h2>
+            <p class="text-gray-400 text-sm mb-8">Planejamento estratégico gerado para execução imediata.</p>
+            <div class="text-xs text-gray-500">
+                &copy; 2025 Hebert & Co. Documento Confidencial.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Data Storage ---
+        const fragrances = {
+            chairman: {
+                name: "The Chairman",
+                tagline: "Autoridade consolidada",
+                desc: "O cheiro da sala da diretoria. Para o líder maduro, decisivo e respeitado.",
+                notes: ["Cardamomo", "Rum Seco", "Couro Tratado", "Chá Preto", "Vetiver", "Incenso"],
+                vibe: "Tom Ford Ombré Leather / Dior Fahrenheit",
+                quote: "Autoridade que se sente antes de ser dita.",
+                stats: { intensity: 90, sweetness: 20, formality: 100 }
+            },
+            architect: {
+                name: "The Architect",
+                tagline: "Clareza e Foco",
+                desc: "Construção de estratégia. Para o pensador disciplinado e frio.",
+                notes: ["Alecrim", "Mate Verde Tostado", "Hortelã-pimenta", "Gengibre", "Vetiver"],
+                vibe: "Acqua di Parma Colonia Essenza / Guerlain L'Homme Ideal",
+                quote: "Clareza e foco em forma de perfume.",
+                stats: { intensity: 70, sweetness: 10, formality: 85 }
+            },
+            dealmaker: {
+                name: "The Dealmaker",
+                tagline: "Sedução Racional",
+                desc: "Magnético e persuasivo. Para quem fecha acordos com um olhar.",
+                notes: ["Framboesa Seca", "Couro Envelhecido", "Olíbano", "Âmbar"],
+                vibe: "Initio Rehab + Aventus Combo",
+                quote: "Para quem fecha acordos com um olhar.",
+                stats: { intensity: 85, sweetness: 60, formality: 70 }
+            },
+            legacy: {
+                name: "The Legacy",
+                tagline: "Presença Atemporal",
+                desc: "Firmeza e mistério. A presença de alguém que já deixou sua marca.",
+                notes: ["Oud Seco", "Mirra", "Incenso Escuro", "Patchouli"],
+                vibe: "Amouage Interlude / Tom Ford Oud Wood",
+                quote: "Presença de alguém que já deixou marca.",
+                stats: { intensity: 100, sweetness: 30, formality: 95 }
+            }
+        };
+
+        // --- Interaction Logic: Fragrance Portfolio ---
+        function updateFragrance(key, btnElement) {
+            // Update Active State on Buttons
+            document.querySelectorAll('.fragrance-card').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            btnElement.classList.add('active');
+
+            const data = fragrances[key];
+            const contentDiv = document.getElementById('fragrance-content');
+            
+            // Build HTML
+            contentDiv.innerHTML = `
+                <div class="flex flex-col md:flex-row justify-between items-start mb-6 border-b border-gray-100 pb-4">
+                    <div>
+                        <h3 class="serif text-3xl text-gray-900 mb-1">${data.name}</h3>
+                        <p class="text-[#C5A059] font-bold text-sm tracking-widest uppercase">${data.tagline}</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 bg-gray-50 px-4 py-2 rounded-sm border border-gray-100">
+                        <span class="text-xs text-gray-500 uppercase block mb-1">Referência Olfativa</span>
+                        <span class="text-sm font-medium text-gray-700">${data.vibe}</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div>
+                        <p class="text-gray-600 leading-relaxed italic mb-6">"${data.quote}"</p>
+                        <p class="text-gray-700 text-sm mb-6">${data.desc}</p>
+                        
+                        <h4 class="text-xs font-bold uppercase tracking-widest mb-3">Pirâmide Olfativa (Destaques)</h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${data.notes.map(note => `<span class="px-3 py-1 bg-[#1A1A1A] text-white text-xs tracking-wide">${note}</span>`).join('')}
+                        </div>
+                    </div>
+
+                    <div class="space-y-5">
+                        <h4 class="text-xs font-bold uppercase tracking-widest mb-2">Perfil Técnico</h4>
+                        
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span>Intensidade / Projeção</span>
+                                <span>${data.stats.intensity}%</span>
+                            </div>
+                            <div class="w-full bg-gray-100 h-2">
+                                <div class="bg-[#C5A059] h-2 transition-all duration-500" style="width: ${data.stats.intensity}%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span>Doçura</span>
+                                <span>${data.stats.sweetness}%</span>
+                            </div>
+                            <div class="w-full bg-gray-100 h-2">
+                                <div class="bg-gray-400 h-2 transition-all duration-500" style="width: ${data.stats.sweetness}%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span>Formalidade</span>
+                                <span>${data.stats.formality}%</span>
+                            </div>
+                            <div class="w-full bg-gray-100 h-2">
+                                <div class="bg-gray-800 h-2 transition-all duration-500" style="width: ${data.stats.formality}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize First Fragrance
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstBtn = document.querySelector('.fragrance-card');
+            updateFragrance('chairman', firstBtn);
+            
+            initCharts();
+            updateFinancials(); // Initial calculation
+        });
+
+        // --- Interaction Logic: Roadmap ---
+        function switchPhase(phaseNum) {
+            // Update Tabs
+            document.querySelectorAll('.phase-tab').forEach(tab => {
+                tab.classList.remove('active', 'text-[#C5A059]', 'border-[#C5A059]');
+                tab.classList.add('text-gray-400', 'border-transparent');
+            });
+            const activeTab = document.getElementById(`tab-${phaseNum}`);
+            activeTab.classList.add('active', 'text-[#C5A059]', 'border-[#C5A059]');
+            activeTab.classList.remove('text-gray-400', 'border-transparent');
+
+            // Update Content
+            document.querySelectorAll('.phase-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`phase-${phaseNum}-content`).classList.remove('hidden');
+        }
+
+        // --- Financial Logic & Charts ---
+        let profitChart, costChart;
+
+        // Constants from report
+        const BATCH_SIZE = 300;
+        const FIXED_COSTS = 3300; // Label (800) + Box (1500) + Log (1000) -> 3300 total fixedish
+        const FIXED_PACKAGING = 2700; // 300 * 9
+        
+        function updateFinancials() {
+            const price = parseInt(document.getElementById('price-slider').value);
+            const liquidCostPerUnit = parseInt(document.getElementById('liquid-slider').value);
+            
+            // Displays
+            document.getElementById('price-display').innerText = `R$ ${price}`;
+            document.getElementById('liquid-cost-display').innerText = `R$ ${liquidCostPerUnit}`;
+
+            // Calculations
+            const totalLiquidCost = liquidCostPerUnit * BATCH_SIZE; // ~18000 default
+            const totalCost = totalLiquidCost + FIXED_PACKAGING + FIXED_COSTS;
+            const unitCost = Math.round(totalCost / BATCH_SIZE);
+            
+            const revenue = price * BATCH_SIZE;
+            const profit = revenue - totalCost;
+            const margin = Math.round(((price - unitCost) / price) * 100);
+
+            // Update DOM text
+            document.getElementById('total-unit-cost').innerText = `R$ ${unitCost},00`;
+            document.getElementById('gross-margin').innerText = `${margin}%`;
+
+            // Update Profit Chart
+            profitChart.data.datasets[0].data = [totalCost, revenue, profit];
+            profitChart.update();
+
+            // Update Cost Chart (Liquid updates dynamically)
+            costChart.data.datasets[0].data = [totalLiquidCost, FIXED_PACKAGING, 1500, 800, 1000];
+            costChart.update();
+        }
+
+        function initCharts() {
+            // Chart 1: Profit/Revenue Bar
+            const ctxProfit = document.getElementById('profitChart').getContext('2d');
+            profitChart = new Chart(ctxProfit, {
+                type: 'bar',
+                data: {
+                    labels: ['Investimento Total', 'Faturamento Bruto', 'Lucro Líquido'],
+                    datasets: [{
+                        label: 'Valores (R$)',
+                        data: [24000, 117000, 93000], // Initial placeholders
+                        backgroundColor: ['#4A5568', '#C5A059', '#2F855A'],
+                        borderRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'R$ ' + context.raw.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f3f4f6' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Cost Breakdown Doughnut
+            const ctxCost = document.getElementById('costChart').getContext('2d');
+            costChart = new Chart(ctxCost, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Líquido (Essência/Álcool)', 'Frascos/Válvulas', 'Caixas', 'Rótulos', 'Outros'],
+                    datasets: [{
+                        data: [18000, 2700, 1500, 800, 1000],
+                        backgroundColor: ['#1A1A1A', '#C5A059', '#A0AEC0', '#E2E8F0', '#718096'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                font: { size: 10, family: 'Inter' },
+                                boxWidth: 10
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Listeners
+            document.getElementById('price-slider').addEventListener('input', updateFinancials);
+            document.getElementById('liquid-slider').addEventListener('input', updateFinancials);
+        }
+
+    </script>
+</body>
+</html>
